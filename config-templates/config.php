@@ -63,8 +63,9 @@ $config = [
      * root directory.
      */
     'certdir' => 'cert/',
-    'loggingdir' => 'log/',
-    'datadir' => 'data/',
+    'loggingdir' => '/var/log/simplesamlphp',
+    'datadir' => '/var/opt/uninett/simplesamlphp',
+    'cachedir' => '/var/cache/simplesamphp',
     'tempdir' => '/tmp/simplesaml',
 
     /*
