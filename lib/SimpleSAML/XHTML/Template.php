@@ -274,7 +274,7 @@ class Template extends Response
     private function setupTwig()
     {
         $auto_reload = $this->configuration->getBoolean('template.auto_reload', true);
-        $cache = $this->configuration->getString('template.cache', false);
+        $cache = $this->configuration->getString('cachedir', false);
 
         // set up template paths
         $loader = $this->setupTwigTemplatepaths();

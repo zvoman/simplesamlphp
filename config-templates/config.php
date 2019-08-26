@@ -55,6 +55,7 @@ $config = [
      * The following settings are *filesystem paths* which define where
      * SimpleSAMLphp can find or write the following things:
      * - 'certdir': The base directory for certificate and key material.
+     * - 'cachedir': The base directory for caching routes, templates, etc.
      * - 'loggingdir': Where to write logs.
      * - 'datadir': Storage of general data.
      * - 'tempdir': Saving temporary files. SimpleSAMLphp will attempt to create
@@ -64,7 +65,7 @@ $config = [
      */
     'certdir' => 'cert/',
     'loggingdir' => '/var/log/simplesamlphp',
-    'datadir' => '/var/opt/uninett/simplesamlphp',
+    'datadir' => '/var/opt/uninett/simplesamlphp/data',
     'cachedir' => '/var/cache/simplesamphp',
     'tempdir' => '/tmp/simplesaml',
 
@@ -832,15 +833,6 @@ $config = [
      * \SimpleSAML\XHTML\TemplateControllerInterface interface to use it.
      */
     //'theme.controller' => '',
-
-    /*
-     * Templating options
-     *
-     * By default, twig templates are not cached. To turn on template caching:
-     * Set 'template.cache' to an absolute path pointing to a directory that
-     * SimpleSAMLphp has read and write permissions to.
-     */
-    //'template.cache' => '',
 
     /*
      * Set the 'template.auto_reload' to true if you would like SimpleSAMLphp to
