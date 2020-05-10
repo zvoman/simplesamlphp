@@ -1,11 +1,3 @@
-SimpleSAMLphp
-=============
-[![Build Status](https://travis-ci.org/simplesamlphp/simplesamlphp.svg?branch=master)](https://travis-ci.org/simplesamlphp/simplesamlphp)
-[![Coverage Status](https://codecov.io/gh/simplesamlphp/simplesamlphp/branch/master/graph/badge.svg)](https://codecov.io/gh/simplesamlphp/simplesamlphp)
-
-This is the official repository of the SimpleSAMLphp software.
-
-* [SimpleSAMLphp homepage](https://simplesamlphp.org)
-* [SimpleSAMLphp Downloads](https://simplesamlphp.org/download)
-
-Please, [contribute](CONTRIBUTING.md)!
+This branch is a copy of the simplesamlphp-1.18 branch and merely exists for testing purposes.
+Due to circular dependencies in 1.18 and 1.19, we were unable to test the modules.
+This branch removes any dependencies on the SSP modules, so the modules can have unit testing.
