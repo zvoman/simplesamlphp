@@ -10,6 +10,21 @@ See the upgrade notes for specific information about upgrading.
 
 Released TBD
 
+  * Fixed Artifact Resolution due to incorrect use of Issuer objects (#1343).
+  * Fixed some of the German translations (#1331). Thanks @htto!
+  * Harden against CVE-2020-13625;  this package is not affected, but 3rd party modules may (#1333).
+  * Harden against JS issues (npm audit fix)
+
+### cron
+  * Fixed old-ui (#1248)
+
+### ldap
+  * Moved array with binary attributes to authsource config (v0.9.9)
+    Instead of having to edit code, you can now set 'attributes.binary' in the authsource configuration.
+
+### metarefresh
+  * Add attributewhitelist to support e.g. R&S+Sirtfi (v0.9.5)
+
 ### saml2 library
   * Fixed a bug in AuthnRequest.php that would raise an InvalidArgumentException when setting
   *   the AssertionConsumerServiceIndex on an saml:SP authsource. Thanks to Andrea @ Oracle for reporting this.
