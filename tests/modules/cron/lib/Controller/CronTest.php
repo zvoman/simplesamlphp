@@ -51,7 +51,7 @@ class CronTest extends TestCase
         $this->session = Session::getSessionFromRequest();
 
         $this->authUtils = new class () extends Utils\Auth {
-            public static function requireAdmin(): void
+            public function requireAdmin(): void
             {
                 // stub
             }

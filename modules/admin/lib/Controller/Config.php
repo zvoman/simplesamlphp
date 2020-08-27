@@ -30,10 +30,9 @@ class Config
     protected $config;
 
     /**
-     * @var \SimpleSAML\Utils\Auth|string
-     * @psalm-var \SimpleSAML\Utils\Auth|class-string
+     * @var \SimpleSAML\Utils\Auth
      */
-    protected $authUtils = Utils\Auth::class;
+    protected $authUtils;
 
     /** @var Menu */
     protected $menu;
@@ -53,6 +52,7 @@ class Config
         $this->config = $config;
         $this->session = $session;
         $this->menu = new Menu();
+        $this->authUtils = new Utils\Auth();
     }
 
 
@@ -76,12 +76,12 @@ class Config
      */
     public function diagnostics(Request $request): Template
     {
-        $this->authUtils::requireAdmin();
+        $this->authUtils->requireAdmin();
 
         $t = new Template($this->config, 'admin:diagnostics.twig');
         $t->data = [
             'remaining' => $this->session->getAuthData('admin', 'Expire') - time(),
-            'logouturl' => Utils\Auth::getAdminLogoutURL(),
+            'logouturl' => $this->authUtils->getAdminLogoutURL(),
             'items' => [
                 'HTTP_HOST' => [$request->getHost()],
                 'HTTPS' => $request->isSecure() ? ['on'] : [],
@@ -111,7 +111,7 @@ class Config
      */
     public function main(/** @scrutinizer ignore-unused */ Request $request): Template
     {
-        $this->authUtils::requireAdmin();
+        $this->authUtils->requireAdmin();
 
         $t = new Template($this->config, 'admin:config.twig');
         $t->data = [
@@ -132,11 +132,11 @@ class Config
                 'saml20idp' => $this->config->getBoolean('enable.saml20-idp', false),
             ],
             'funcmatrix' => $this->getPrerequisiteChecks(),
-            'logouturl' => Utils\Auth::getAdminLogoutURL(),
+            'logouturl' => $this->authUtils->getAdminLogoutURL(),
         ];
 
         Module::callHooks('configpage', $t);
-        $this->menu->addOption('logout', Utils\Auth::getAdminLogoutURL(), Translate::noop('Log out'));
+        $this->menu->addOption('logout', $this->authUtils->getAdminLogoutURL(), Translate::noop('Log out'));
         return $this->menu->insert($t);
     }
 
@@ -150,7 +150,7 @@ class Config
      */
     public function phpinfo(/** @scrutinizer ignore-unused */ Request $request): RunnableResponse
     {
-        $this->authUtils::requireAdmin();
+        $this->authUtils->requireAdmin();
 
         return new RunnableResponse('phpinfo');
     }
