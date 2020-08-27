@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use SimpleSAML\Configuration;
 use SimpleSAML\Error;
-use SimpleSAML\Utils\Crypto;
+use SimpleSAML\Utils;
 
 /**
  * Tests for SimpleSAML\Utils\Crypto.
@@ -31,6 +31,9 @@ class CryptoTest extends TestCase
     /** @var string */
     protected $certdir;
 
+    /** @var \SimpleSAML\Utils\Crypto */
+    protected $cryptoUtils;
+
 
     /**
      * @return void
@@ -46,6 +49,7 @@ class CryptoTest extends TestCase
         );
         $this->root_directory = vfsStream::url(self::ROOTDIRNAME);
         $this->certdir = $this->root_directory . DIRECTORY_SEPARATOR . self::DEFAULTCERTDIR;
+        $this->cryptoUtils = new Utils\Crypto();
     }
 
 
@@ -58,17 +62,17 @@ class CryptoTest extends TestCase
     public function testAesDecrypt(): void
     {
         if (!extension_loaded('openssl')) {
-            $this->expectException(Error\Exception::class);
+            $this->markTestSkipped('The openssl PHP module is not loaded.');
         }
 
         $secret = 'SUPER_SECRET_SALT';
-        $m = new ReflectionMethod('\SimpleSAML\Utils\Crypto', 'aesDecryptInternal');
-        $m->setAccessible(true);
-
         $plaintext = 'SUPER_SECRET_TEXT';
-        $ciphertext = 'uR2Yu0r4itInKx91D/l9y/08L5CIQyev9nAr27fh3Sshous4'
-            . 'vbXRRcMcjqHDOrquD+2vqLyw7ygnbA9jA9TpB4hLZocvAWcTN8tyO82hiSY=';
-        $this->assertEquals($plaintext, $m->invokeArgs(null, [base64_decode($ciphertext), $secret]));
+        $ciphertext = <<<CIPHER
+uR2Yu0r4itInKx91D/l9y/08L5CIQyev9nAr27fh3Sshous4vbXRRcMcjqHDOrquD+2vqLyw7ygnbA9jA9TpB4hLZocvAWcTN8tyO82hiSY=
+CIPHER;
+
+        $decrypted = $this->cryptoUtils->aesDecrypt(base64_decode($ciphertext), $secret);
+        $this->assertEquals($plaintext, $decrypted);
     }
 
 
@@ -80,18 +84,15 @@ class CryptoTest extends TestCase
     public function testAesEncrypt(): void
     {
         if (!extension_loaded('openssl')) {
-            $this->expectException(Error\Exception::class);
+            $this->markTestSkipped('The openssl PHP module is not loaded.');
         }
 
         $secret = 'SUPER_SECRET_SALT';
-        $e = new ReflectionMethod('\SimpleSAML\Utils\Crypto', 'aesEncryptInternal');
-        $d = new ReflectionMethod('\SimpleSAML\Utils\Crypto', 'aesDecryptInternal');
-        $e->setAccessible(true);
-        $d->setAccessible(true);
-
         $original_plaintext = 'SUPER_SECRET_TEXT';
-        $ciphertext = $e->invokeArgs(null, [$original_plaintext, $secret]);
-        $decrypted_plaintext = $d->invokeArgs(null, [$ciphertext, $secret]);
+
+        $ciphertext = $this->cryptoUtils->aesEncrypt($original_plaintext, $secret);
+        $decrypted_plaintext = $this->cryptoUtils->aesDecrypt($ciphertext, $secret);
+
         $this->assertEquals($original_plaintext, $decrypted_plaintext);
     }
 
@@ -139,7 +140,7 @@ pfajpJ9ZzdyLIo6dVjdQtl+S1rpFCx7ziVN8tCCX4fAVCqRqZJaG/UMLvguVqayb
 5iHKlJ6FlnuhcGCDsUCvG8qCw9FfoS0tuS4tKoQ5WHGQx3sKmr/D
 -----END CERTIFICATE-----
 PHP;
-        $this->assertEquals(trim($pem), trim(Crypto::der2pem(Crypto::pem2der($pem))));
+        $this->assertEquals(trim($pem), trim($this->cryptoUtils->der2pem($this->cryptoUtils->pem2der($pem))));
     }
 
 
@@ -150,8 +151,8 @@ PHP;
     {
         $pw = "password";
 
-        $hash = Crypto::pwHash($pw);
-        $res = Crypto::pwValid($hash, $pw);
+        $hash = $this->cryptoUtils->pwHash($pw);
+        $res = $this->cryptoUtils->pwValid($hash, $pw);
 
         $this->assertTrue($res);
     }
@@ -165,8 +166,8 @@ PHP;
         $pw = "password";
         $pw2 = "password2";
 
-        $hash = Crypto::pwHash($pw);
-        $res = Crypto::pwValid($hash, $pw2);
+        $hash = $this->cryptoUtils->pwHash($pw);
+        $res = $this->cryptoUtils->pwValid($hash, $pw2);
 
         $this->assertFalse($res);
     }
@@ -177,7 +178,7 @@ PHP;
      */
     public function testSecureCompareEqual(): void
     {
-        $res = Crypto::secureCompare("string", "string");
+        $res = $this->cryptoUtils->secureCompare("string", "string");
 
         $this->assertTrue($res);
     }
@@ -188,7 +189,7 @@ PHP;
      */
     public function testSecureCompareNotEqual(): void
     {
-        $res = Crypto::secureCompare("string1", "string2");
+        $res = $this->cryptoUtils->secureCompare("string1", "string2");
 
         $this->assertFalse($res);
     }
@@ -203,7 +204,7 @@ PHP;
         $config = new Configuration([], 'test');
         $required = true;
 
-        Crypto::loadPrivateKey($config, $required);
+        $this->cryptoUtils->loadPrivateKey($config, $required);
     }
 
 
@@ -215,7 +216,7 @@ PHP;
         $config = new Configuration([], 'test');
         $required = false;
 
-        $res = Crypto::loadPrivateKey($config, $required);
+        $res = $this->cryptoUtils->loadPrivateKey($config, $required);
 
         $this->assertNull($res);
     }
@@ -229,7 +230,7 @@ PHP;
         $this->expectException(Error\Exception::class);
         $config = new Configuration(['privatekey' => 'nonexistant'], 'test');
 
-        Crypto::loadPrivateKey($config, false, '', true);
+        $this->cryptoUtils->loadPrivateKey($config, false, '', true);
     }
 
 
@@ -245,7 +246,7 @@ PHP;
 
         file_put_contents($filename, $data);
 
-        $res = Crypto::loadPrivateKey($config, false, '', $full_path);
+        $res = $this->cryptoUtils->loadPrivateKey($config, false, '', $full_path);
         $expected = ['PEM' => $data, 'password' => null];
 
         $this->assertEquals($expected, $res);
@@ -271,7 +272,7 @@ PHP;
 
         file_put_contents($filename, $data);
 
-        $res = Crypto::loadPrivateKey($config, false, '', $full_path);
+        $res = $this->cryptoUtils->loadPrivateKey($config, false, '', $full_path);
         $expected = ['PEM' => $data, 'password' => $password];
 
         $this->assertEquals($expected, $res);
@@ -298,7 +299,7 @@ PHP;
 
         file_put_contents($filename, $data);
 
-        $res = Crypto::loadPrivateKey($config, false, $prefix, $full_path);
+        $res = $this->cryptoUtils->loadPrivateKey($config, false, $prefix, $full_path);
         $expected = ['PEM' => $data, 'password' => $password];
 
         $this->assertEquals($expected, $res);
@@ -314,7 +315,7 @@ PHP;
         $config = new Configuration([], 'test');
         $required = true;
 
-        Crypto::loadPublicKey($config, $required);
+        $this->cryptoUtils->loadPublicKey($config, $required);
     }
 
 
@@ -326,7 +327,7 @@ PHP;
         $config = new Configuration([], 'test');
         $required = false;
 
-        $res = Crypto::loadPublicKey($config, $required);
+        $res = $this->cryptoUtils->loadPublicKey($config, $required);
 
         $this->assertNull($res);
     }
@@ -350,7 +351,7 @@ PHP;
             'test'
         );
 
-        $res = Crypto::loadPublicKey($config);
+        $res = $this->cryptoUtils->loadPublicKey($config);
 
         $this->assertNull($res);
     }
@@ -374,7 +375,7 @@ PHP;
             'test'
         );
 
-        $res = Crypto::loadPublicKey($config);
+        $res = $this->cryptoUtils->loadPublicKey($config);
 
         $this->assertNull($res);
     }
@@ -400,7 +401,7 @@ PHP;
         );
 
         /** @var array $pubkey */
-        $pubkey = Crypto::loadPublicKey($config);
+        $pubkey = $this->cryptoUtils->loadPublicKey($config);
         $res = $pubkey['certData'];
         $expected = $x509certificate;
 
