@@ -28,7 +28,7 @@ class Attributes
      * @throws \InvalidArgumentException If $attributes is not an array or $expected is not a string.
      * @throws \SimpleSAML\Error\Exception If the expected attribute was not found in the attributes array.
      */
-    public static function getExpectedAttribute(array $attributes, string $expected, bool $allow_multiple = false)
+    public function getExpectedAttribute(array $attributes, string $expected, bool $allow_multiple = false)
     {
         if (!array_key_exists($expected, $attributes)) {
             throw new Error\Exception("No such attribute '" . $expected . "' found.");
@@ -69,7 +69,7 @@ class Attributes
      * @author Olav Morken, UNINETT AS <olav.morken@uninett.no>
      * @author Jaime Perez, UNINETT AS <jaime.perez@uninett.no>
      */
-    public static function normalizeAttributesArray(array $attributes): array
+    public function normalizeAttributesArray(array $attributes): array
     {
         $newAttrs = [];
         foreach ($attributes as $name => $values) {
@@ -107,7 +107,7 @@ class Attributes
      *
      * @return array The attribute name, split to the namespace and the actual attribute name.
      */
-    public static function getAttributeNamespace(string $name, string $defaultns): array
+    public function getAttributeNamespace(string $name, string $defaultns): array
     {
         $slash = strrpos($name, '/');
         if ($slash !== false) {

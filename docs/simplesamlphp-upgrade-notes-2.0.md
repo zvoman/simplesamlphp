@@ -13,6 +13,7 @@ Upgrade notes for SimpleSAMLphp 2.0
 - If you're using the core:TargetedID authproc-filter, note that the `attributename` setting has been renamed to `identifyingAttribute`.
 - The following classes have been migrated to non-static:
   + lib/SimpleSAMLphp\Utils\Arrays
+  + lib/SimpleSAMLphp\Utils\Attributes
 
   If you use any of these classes in your modules or themes, you will now have to instantiate them so that:
 
