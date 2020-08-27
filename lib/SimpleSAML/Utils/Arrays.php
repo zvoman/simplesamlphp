@@ -23,7 +23,7 @@ class Arrays
      * @author Andreas Solberg, UNINETT AS <andreas.solberg@uninett.no>
      * @author Jaime Perez, UNINETT AS <jaime.perez@uninett.no>
      */
-    public static function arrayize($data, $index = 0): array
+    public function arrayize($data, $index = 0): array
     {
         return (is_array($data)) ? $data : [$index => $data];
     }
@@ -38,7 +38,7 @@ class Arrays
      *
      * @author Andreas Solberg, UNINETT AS <andreas.solberg@uninett.no>
      */
-    public static function transpose(array $array)
+    public function transpose(array $array)
     {
         $ret = [];
         foreach ($array as $k1 => $a2) {

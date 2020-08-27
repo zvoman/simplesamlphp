@@ -11,3 +11,16 @@ Upgrade notes for SimpleSAMLphp 2.0
 - If you used some of the modules that were shipped with SimpleSAMLphp, you now have to manually install them using Composer;
     For example, to use the ldap-module: bin/composer.phar require simplesamlphp/simplesamlphp-module-ldap --update-no-dev
 - If you're using the core:TargetedID authproc-filter, note that the `attributename` setting has been renamed to `identifyingAttribute`.
+- The following classes have been migrated to non-static:
+  + lib/SimpleSAMLphp\Utils\Arrays
+
+  If you use any of these classes in your modules or themes, you will now have to instantiate them so that:
+
+  // Old style
+  $x = \SimpleSAML\Utils\Arrays::arrayize($someVar)
+
+  becomes:
+
+  // New style
+  $arrayUtils = new \SimpleSAML\Utils\Arrays();
+  $x = $arrayUtils->arrayize($someVar);
