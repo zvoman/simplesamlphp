@@ -236,7 +236,8 @@ class Configuration implements Utils\ClearableState
             if ($configSet !== 'simplesaml') {
                 throw new \Exception('Configuration set \'' . $configSet . '\' not initialized.');
             } else {
-                self::$configDirs['simplesaml'] = Utils\Config::getConfigDir();
+                $configUtils = new Utils\Config();
+                self::$configDirs['simplesaml'] = $configUtils->getConfigDir();
             }
         }
 
@@ -265,7 +266,8 @@ class Configuration implements Utils\ClearableState
             if ($configSet !== 'simplesaml') {
                 throw new \Exception('Configuration set \'' . $configSet . '\' not initialized.');
             } else {
-                self::$configDirs['simplesaml'] = Utils\Config::getConfigDir();
+                $configUtils = new Utils\Config();
+                self::$configDirs['simplesaml'] = $configUtils->getConfigDir();
             }
         }
 
@@ -1161,8 +1163,10 @@ class Configuration implements Utils\ClearableState
                 ],
             ];
         } elseif ($this->hasValue($prefix . 'certificate')) {
+            $configUtils = new Utils\Config();
+
             $file = $this->getString($prefix . 'certificate');
-            $file = Utils\Config::getCertPath($file);
+            $file = $configUtils->getCertPath($file);
             $data = @file_get_contents($file);
 
             if ($data === false) {

@@ -82,7 +82,8 @@ class Crypto
      */
     public static function aesDecrypt(string $ciphertext): string
     {
-        return self::aesDecryptInternal($ciphertext, Config::getSecretSalt());
+        $configUtils = new Config();
+        return self::aesDecryptInternal($ciphertext, $configUtils->getSecretSalt());
     }
 
 
@@ -142,7 +143,8 @@ class Crypto
      */
     public static function aesEncrypt(string $data): string
     {
-        return self::aesEncryptInternal($data, Config::getSecretSalt());
+        $configUtils = new Config();
+        return self::aesEncryptInternal($data, $configUtils->getSecretSalt());
     }
 
 
@@ -206,7 +208,8 @@ class Crypto
         }
 
         if (!$full_path) {
-            $file = Config::getCertPath($file);
+            $configUtils = new Config();
+            $file = $configUtils->getCertPath($file);
         }
 
         $data = @file_get_contents($file);

@@ -48,10 +48,10 @@ class TargetedID extends Auth\ProcessingFilter
     private $generateNameId = false;
 
     /**
-     * @var \SimpleSAML\Utils\Config|string
-     * @psalm-var \SimpleSAML\Utils\Config|class-string
+     * @var \SimpleSAML\Utils\Config
      */
-    protected $configUtils = Utils\Config::class;
+    protected $configUtils;
+
 
     /**
      * Initialize this filter.
@@ -77,6 +77,8 @@ class TargetedID extends Auth\ProcessingFilter
                 throw new Exception('Invalid value of \'nameId\'-option to core:TargetedID filter.');
             }
         }
+
+        $this->configUtils = new Utils\Config();
     }
 
 
@@ -124,7 +126,7 @@ class TargetedID extends Auth\ProcessingFilter
             $dstID = '';
         }
 
-        $secretSalt = $this->configUtils::getSecretSalt();
+        $secretSalt = $this->configUtils->getSecretSalt();
         $uidData = 'uidhashbase' . $secretSalt;
         $uidData .= strlen($srcID) . ':' . $srcID;
         $uidData .= strlen($dstID) . ':' . $dstID;
