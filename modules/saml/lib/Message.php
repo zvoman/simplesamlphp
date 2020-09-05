@@ -246,7 +246,7 @@ class Message
     public static function getDecryptionKeys(
         Configuration $srcMetadata,
         Configuration $dstMetadata,
-        EncryptionMethod $encryptionMethod = null
+        $encryptionMethod = null
     ): array {
         $sharedKey = $srcMetadata->getString('sharedkey', null);
         if ($sharedKey !== null) {
