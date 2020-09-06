@@ -141,7 +141,7 @@ CIPHER;
         $this->cryptoUtils->aesDecrypt(base64_decode($ciphertext), $secret);
     }
 
-
+  
     /**
      * @return void
      */
